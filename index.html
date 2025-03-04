@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erotik Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .search-bar {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .search-bar input {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .categories button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .product {
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .carousel {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .carousel img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            position: absolute;
+            transition: opacity 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Erotik Shop</div>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Buscar productos...." onkeyup="filterProducts()">
+        </div>
+        <div class="categories">
+            <button onclick="filterCategory('All')">All</button>
+            <button onclick="filterCategory('Dildos')">Dildos</button>
+            <button onclick="filterCategory('Lenceria')">Lencería</button>
+            <button onclick="filterCategory('Vibrador')">Vibradores</button>
+            <button onclick="filterCategory('Juguetes')">Juguetes</button>
+            <button onclick="filterCategory('Hombres')">Hombres</button>
+            <button onclick="filterCategory('Lubricantes y aceites')">Lubricantes y aceites</button>
+            <button onclick="filterCategory('Pot')">Potenciadores</button>
+            <button onclick="filterCategory('bdsm')">BDSM</button>
+            <button onclick="filterCategory('sm')">Sex Machines</button>
+            <button onclick="filterCategory('Accesorios')">Accesorios</button>
+        </div>
+        <div class="products" id="product-list"></div>
+    </div>
+
+    <script>
+        const products = [
+            { name: "Beautiful Dildo", price: "$200,000 COP", category: "Dildos", images: ["./Images/beautiful1.png"] },
+            { name: "Lenceria Ligera", price: "$120,000 COP", category: "Lenceria", images: ["./Images/lenceria1.png", "./Images/lenceria2.png"] },
+            { name: "Mini hitachi", price: "$80,000 COP", category: "Vibrador", images: ["./Images/hita2.png","./Images/hita1.png", "./Images/hita3.png"] },
+            { name: "Disfrute anal electrizante", price: "$45,000 COP", category: "Lubricantes y aceites", images: ["./Images/senanal2.png", "./Images/senanal3.png"] },
+            { name: "Cable de carga Lush", price: "95,000 COP", category: "Accesorios", images: ["./Images/clush1.png","./Images/clush2.png","./Images/clush3.png"] },
+            { name: "Dildo-v point", price: "$40,000 COP", category: "Dildos", images: ["./Images/dlpoint1.png","./Images/dlpoint2.png","./Images/dlpoint3.png","./Images/dlpoint4.png", "./Images/dlpoint5.png"] },
+            { name: "Lush", price: "$150,000 COP", category: "Vibrador", images: ["./Images/lush1.png","./Images/lush2.png", "./Images/lush3.png", "./Images/lush4.png"] },
+            { name: "Lenceria Malla", price: "$45,000 COP", category: "Lenceria", images: ["./Images/malla.png"] },
+            { name: "Labial vibrador", price: "$35,000 COP", category: "Vibrador", images: ["./Images/lv1.png","./Images/lv2.png","./Images/lv3.png","./Images/lv4.png"] },
+            { name: "Crema Besable - Ice Cream", price: "$45,000 COP", category: "Lubricantes y aceites", images: ["./Images/cb.png"] },
+            { name: "Dildo transparente", price: "$135,000 COP", category: "Dildos", images: ["./Images/dt1.png","./Images/dt2.png"] },
+            { name: "Mini sex machine", price: "$1,600,000 COP", category: "sm", images: ["./Images/sexmima1.png","./Images/sexmima2.png","./Images/sexmima3.png"] },
+            { name: "Bala vibradora", price: "$45,000 COP", category: "Vibrador", images: ["./Images/bala1.png","./Images/bala2.png","./Images/bala3.png"] },
+            { name: "Lenceria IT", price: "$95,000 COP", category: "Lenceria", images: ["./Images/IT.png",] },
+            { name: "Cable de carga", price: "$95,000 COP", category: "Accesorios", images: ["./Images/cc.png",] },
+            { name: "Plug anal", price: "$40,000 COP", category: "Juguetes", images: ["./Images/pluganal1.png","./Images/pluganal2.png","./Images/pluganal3.png"] },
+            { name: "Vagina", price: "$45,000 COP", category: "Hombres", images: ["./Images/vg1.png",] },
+            { name: "Jose", price: "$375,000 COP", category: "Dildos", images: ["./Images/torso13.png","./Images/torso2.png","./Images/torso3.png","./Images/torso4.png","./Images/torso5.png",] },
+            { name: "Dildo sensacion real", price: "$95,000 COP", category: "Dildos", images: ["./Images/dlr1.png","./Images/dlr2.png"] },
+            { name: "Dildo Vibrador real", price: "$165,000 COP", category: "Dildos", images: ["./Images/dlvr1.png",] },
+            { name: "Dildo vibrador 24cm", price: "$75,000 COP", category: "Dildos", images: ["./Images/dlvrr1.png","./Images/dlvrr2.png"] },
+            { name: "Bolas anales", price: "$40,000 COP", category: "Juguetes", images: ["./Images/bolasanales.png","./Images/bolasanales1.png"] },
+            { name: "Arnes 1", price: "$65,000 COP", category: "bdsm", images: ["./Images/bdsm1.png","./Images/bdsm2.png","./Images/bdsm3.png", "./Images/bdsm4.png"] },
+            { name: "Rosa succionadora de clitoris", price: "$135,000 COP", category: "Jueguetes", images: ["./Images/suc1.png","./Images/suc2.png","./Images/suc3.png"] },
+            { name: "Lenceria Roja", price: "$45,000 COP", category: "Lenceria", images: ["./Images/tiras1.jpg","./Images/tiras2.jpg"] },
+            { name: "Dos en uno", price: "$205,000 COP", category: "Vibrador", images: ["./Images/sucv1.jpg","./Images/sucv2.jpg","./Images/sucv3.jpg","./Images/sucv4.jpg","./Images/sucv5.jpg","./Images/sucv6.jpg","./Images/sucv7.jpg","./Images/sucv8.jpg"] },
+            { name: "Vibrador punto G", price: "$40,000 COP", category: "Vibrador", images: ["./Images/g.jpg"] },
+            { name: "Succionador de clitoris", price: "$135,000 COP", category: "Juguetes", images: ["./Images/sucd1.jpg","./Images/sucd2.jpg"] },
+            { name: "Dilatador anal", price: "$140,000 COP", category: "Juguetes", images: ["./Images/dil1.jpg","./Images/dil2.jpg"] },
+            { name: "Lubricante sabor crema de whisky", price: "40,000 COP", category: "Lubricantes y aceites", images: ["./Images/cremaw1.jpg","./Images/cremaw2.jpg"] },
+            { name: "Dilatador de garganta", price: "50,000 COP", category: "Lubricantes y aceites", images: ["./Images/gar1.jpg","./Images/gar2.jpg"] },
+            { name: "Camila", price: "290,000 COP", category: "Hombres", images: ["./Images/camila1.jpg","./Images/camila2.jpg","./Images/camila3.jpg"] },
+            { name: "Arnes", price: "200,000 COP", category: "Juguetes", images: ["./Images/darnes1.jpg"] },
+            { name: "Lubricante anal", price: "85,000 COP", category: "Lubricantes y aceites", images: ["./Images/lbanal1.jpg","./Images/lbanal2.jpg"] },
+            { name: "Vibrador rosado", price: "105,000 COP", category: "Vibrador", images: ["./Images/vibra.jpg", "./Images/vibra2.jpg"] },
+            { name: "Forro de pene", price: "60,000 COP", category: "Juguetes", images: ["./Images/forro.jpg"] },
+            { name: "James", price: "70,000 COP", category: "Dildos", images: ["./Images/james.jpg"] },
+            { name: "Paleta", price: "45,000 COP", category: "bdsm", images: ["./Images/paleta1.jpg", "./Images/paleta2.jpg"] },
+            { name: "Vibrador doble", price: "155,000 COP", category: "Vibrador", images: ["./Images/db1.jpg", "./Images/db2.jpg"] },
+            { name: "Strap-on", price: "105,000 COP", category: "Dildos", images: ["./Images/ar1.jpg","./Images/ar2.jpg"] },
+            { name: "Dildo love", price: "50,000 COP", category: "Dildos", images: ["./Images/love.jpg"] },
+            { name: "Vibrador con control remoto", price: "105,000 COP", category: "Vibrador", images: ["./Images/rem1.jpg", "./Images/rem2.jpg"] },
+            { name: "Sex machine", price: "470,000 COP", category: "sm", images: ["./Images/sexm1.jpg"] },
+            { name: "Huevo vibrador", price: "55,000 COP", category: "Vibrador", images: ["./Images/huevov1.jpg", "./Images/huevov2.jpg"] },
+            { name: "Lubricante neutro", price: "55,000 COP", category: "Lubricantes y aceites", images: ["./Images/ln1.jpg","./Images/ln2.jpg"] },
+            { name: "Juego de cartas", price: "$45,000 COP", category: "Accesorios", images: ["./Images/juego1.jpg","./Images/juego2.jpg"] },
+            { name: "Huevo vibrador con control", price: "45,000 COP", category: "Vibrador", images: ["./Images/hv1.jpg", "./Images/hv2.jpg"] },
+            { name: "Plug vibrador", price: "115,000 COP", category: "Vibrador", images: ["./Images/plugv1.jpg", "./Images/plugv2.jpg"] },
+            { name: "Potenciador sexual femenino", price: "25,000 COP", category: "Pot", images: ["./Images/pww1.jpg", "./Images/pww2.jpg"] },
+            { name: "Gata", price: "$55,000 COP", category: "Lenceria", images: ["./Images/dg1.jpg", "./Images/dg2.jpg"] },
+            { name: "Succionador de clitoris", price: "235,000 COP", category: "Vibrador", images: ["./Images/succ1.jpg", "./Images/succ2.jpg"] },
+            { name: "Huevo masturbador", price: "$40,000 COP", category: "Hombres", images: ["./Images/egg1.jpg", "./Images/egg2.jpg"] },
+            { name: "Popper", price: "$35,000 COP", category: "Pot", images: ["./Images/popper1.jpg", "./Images/popper2.jpg"] },
+            { name: "BBC Realista", price: "80,000 COP", category: "Dildos", images: ["./Images/real1.jpg"] },
+            { name: "Laura", price: "$200,000 COP", category: "Hombres", images: ["./Images/Laura1.jpg", "./Images/Laura2.jpg", "./Images/Laura3.jpg"] },
+            { name: "Ducha anal", price: "60,000 COP", category: "Accesorios", images: ["./Images/da1.jpg","./Images/da2.jpg"] },
+            { name: "Dildo doble", price: "105,000 COP", category: "Dildos", images: ["./Images/doble.jpg"] },
+            { name: "Vibrador discreto", price: "90,000 COP", category: "Vibrador", images: ["./Images/vd1.jpg", "./Images/vd2.jpg"] },
+            { name: "Lubricante multiorgasmos", price: "35,000 COP", category: "Lubricantes y aceites", images: ["./Images/multi1.jpg","./Images/multi2.jpg"] },
+            { name: "Lenceria colegiala", price: "$100,000 COP", category: "Lenceria", images: ["./Images/col.jpg"] },
+            { name: "Andres", price: "$370,000 COP", category: "Dildos", images: ["./Images/andres1.jpg","./Images/andres2.jpg"] },
+            { name: "Estrechante", price: "55,000 COP", category: "Lubricantes y aceites", images: ["./Images/estr1.jpg","./Images/estr2.jpg","./Images/estr3.jpg"] },
+            { name: "Maria", price: "$75,000 COP", category: "Hombres", images: ["./Images/maria1.jpg", "./Images/maria2.jpg"] },
+            { name: "KIt bondage", price: "85,000 COP", category: "bdsm", images: ["./Images/bondage1.jpg", "./Images/bondage2.jpg", "./Images/bondage3.jpg"] },
+            { name: "Bala vibradora pro", price: "100,000 COP", category: "Vibrador", images: ["./Images/bal1.jpg", "./Images/bal2.jpg", "./Images/bal3.jpg"] },
+            { name: "Lubricante dilatador anal", price: "30,000 COP", category: "Lubricantes y aceites", images: ["./Images/dilanal1.jpg","./Images/dilanal2.jpg"] },
+            { name: "Sado", price: "115,000 COP", category: "bdsm", images: ["./Images/sado1.jpg", "./Images/sado2.jpg", "./Images/sado3.jpg"] },
+        ];
+
+        const productList = document.getElementById("product-list");
+
+        function displayProducts(filter = "All", searchQuery = "") {
+            productList.innerHTML = "";
+            products.forEach((product, index) => {
+                if ((filter === "All" || product.category === filter) && product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+                    const productDiv = document.createElement("div");
+                    productDiv.classList.add("product");
+                    
+                    const carousel = document.createElement("div");
+                    carousel.classList.add("carousel");
+                    product.images.forEach((image, imgIndex) => {
+                        const img = document.createElement("img");
+                        img.src = image;
+                        img.alt = product.name;
+                        if (imgIndex !== 0) img.style.opacity = "0";
+                        carousel.appendChild(img);
+                    });
+                    
+                    productDiv.innerHTML = `
+                        <h3>${product.name}</h3>
+                        <p>${product.price}</p>
+                    `;
+                    productDiv.insertBefore(carousel, productDiv.firstChild);
+                    productList.appendChild(productDiv);
+                    
+                    startCarousel(carousel);
+                }
+            });
+        }
+
+        function startCarousel(carousel) {
+            let images = carousel.getElementsByTagName("img");
+            let index = 0;
+            setInterval(() => {
+                images[index].style.opacity = "0";
+                index = (index + 1) % images.length;
+                images[index].style.opacity = "1";
+            }, 5000);
+        }
+
+        function filterCategory(category) {
+            displayProducts(category, document.getElementById("search").value);
+        }
+
+        function filterProducts() {
+            displayProducts(document.querySelector(".categories button.active")?.textContent || "All", document.getElementById("search").value);
+        }
+
+        displayProducts();
+    </script>
+</body>
+</html>
